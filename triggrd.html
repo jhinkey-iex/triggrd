@@ -1,9 +1,35 @@
 <html>
     <head>
-        <title>Triggrd</title
+        <title>Triggrd</title>
+<script>
+function foo() {
+    const obj = document.getElementById('first');
+    obj.style.visibility = 'visible';
+}
+function nextPage(current, next) {
+    document.getElementById(current).style.visibility = 'hidden';
+    document.getElementById(next).style.visibility = 'visible';
+}
+</script>
     </head>
 
-    <body>
-        <h1>This is a test</h1>
-    </body>
+<body>
+<h1>This is a test</h1>
+        
+<a onClick='foo()'>click me</a>
+
+<div id=first style='visibility: hidden'>
+<!-- This is the first page users see when they open the app -->
+<h1>First page</h1>
+
+<p>
+<a href='' onClick='nextPage("first", "second"); return false;'>Go to second page</a>
+</div>
+
+<div id=second style='visibility: hidden'>
+<!-- This is the second page -->
+<h1>Second page</h1>
+</div>
+
+</body>
 </html>
