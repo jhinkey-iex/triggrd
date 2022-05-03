@@ -9,19 +9,21 @@ let party;
 const triggerInfo = {
     ballot: {
         /* url can be function or string */
-        url() {
-            return 'https://cloud.iexapis.com/v1/query/DEV/' +
-                   'GENERIC_BALLOT_AVERAGES/2022/' + party + '?last=1';
-        },
+        url: 'https://cloud.iexapis.com/v1/query/DEV/GENERIC_BALLOT_AVERAGES/2022/?last=2',
         period: 10 * 1000,
         /* The state is kept along with the trigger definitions for convenience. */
         state: {
         },
         handleUpdate(ti, data) {
-            if (data.length && ti.state.el) {
-                const el = data[0];
-                const oldDiff = ti.state.el.hi - ti.state.el.lo;
-                const newDiff = el.hi - el.lo;
+            function diff(data) {
+                const mine = +(data[1].candidate === party);
+                const other = +!mine;
+                log.debug("mine: %d; other: %d", mine, other);
+                return data[mine].pct_estimate - data[other].pct_estimate;
+            }
+            if (data.length > 1 && ti.state.el) {
+                const newDiff = diff(data);
+                const oldDiff = diff(ti.state.el);
                 log.debug('oldDiff: %d, newDiff: %d', oldDiff, newDiff);
                 if (newDiff < oldDiff)
                     log.info("kitten me");
@@ -29,8 +31,9 @@ const triggerInfo = {
                     log.info("don't kitten me");
             }
             if (data.length) {
-                log.debug('save data: %s', JSON.stringify(data[0]));
-                ti.state.el = data[0];
+                log.debug('save data: %s', JSON.stringify(data));
+                log.debug('diff would be %f', diff(data));
+                ti.state.el = data;
             }
         }
     },
