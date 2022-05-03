@@ -91,37 +91,126 @@ div {
 <body>
 
 <div id=first style='visibility: visible'>
-<!-- This is the first page users see when they open the app -->
-<h1>First page</h1>
+    <!-- This is the first page users see when they open the app -->
+    <h1>Welcome to Triggrd!</h1>
 
-<p>
-<a href='' onClick='nextPage("first", "second"); return false;'>Go to second page</a>
-</div>
-
-<div id=second>
-<!-- This is the second page -->
-<h1>Second page</h1>
-
-<h2>Select your triggers:</h2>
-<form onSubmit='actOnTriggers(); return false;'>
-    <input type=checkbox name=triggers value=ballot>Generic Ballot
-        <select name=party>
-            <option value=Democrats>Democrat
-            <option value=Republicans>Republican
-        </select><br>
-    <input type=checkbox name=triggers value=recession>Probability of a Recession<br>
     <p>
-    <input type=submit value='Register My Triggers'>
-</form>
+        We're here to calm your nerves and make you feel good in the midst of life's storms and hiccups.
+    </p>
+
+    <a href='' onClick='nextPage("first", "basic_personal_info"); return false;'>Get Started</a>
 </div>
 
-<div id=third>
-<!-- This is where notifications happen (at this point, we are already
-     polling. -->
-<h1>Notifications</h1>
+<div id=basic_personal_info>
+    <!-- This is the basic_personal_info page -->
+    <h1>Tell us about yourself</h1>
 
-TODO
-</div>
+    <form> <!-- action="some-path.*"-->
+        <label for="fname">First name:</label>
+        <input type="text" id="fname" name="fname"><br>
+
+        <label for="political_party">Political party affiliation (if politics gets you fired up):</label><br>
+        <input type="radio" id="democrat" name="democrat" value="Democrat">
+        <label for="democrat">Democrat</label><br>
+        <input type="radio" id="republican" name="republican" value="Republican">
+        <label for="republican">Republican</label><br>
+        <input type="radio" id="neither_party" name="neither_party" value="Neither party">
+        <label for="neither_party">Neither</label><br>
+
+        <a href='' onClick='nextPage("basic_personal_info", "triggers"); return false;'>
+            <input type="submit" value="Submit">
+        </a>
+    </form>
+ </div>
+
+ <div id=triggers>
+    <h1>Triggers?</h1>
+
+    <p>Which events make you anxious?</p>
+    
+    <form>
+        
+        <input type="checkbox" id="recession" name="recession" value="recession">
+        <label for="recession">Recession probability increases</label><br>
+        
+        <input type="checkbox" id="jet-fuel" name="jet-fuel" value="jet-fuel">
+        <label for="jet-fuel">Jet fuel price hikes</label><br>
+        
+        <input type="checkbox" id="crypto" name="crypto" value="crypto">
+        <label for="crypto">Crypto crashes</label><br>
+        
+        <input type="checkbox" id="politics" name="politics" value="politics">
+        <label for="politics">Political party affiliation drops</label><br>
+
+        <a href='' onClick='nextPage("triggers", "your_love_lang"); return false;'>
+            <input type="submit" value="Submit">
+        </a>
+    </form>
+  </div>
+
+  <div id=your_love_lang>
+     <h1>Your love language?</h1>
+
+     <p>
+        What fills your "love tank"?
+     </p>
+ 
+     <form>
+        <input type="radio" id="gifts" name="love_lang" value="Receiving gifts">
+         <label for="gifts">Receiving gifts - it's the thoughfulness that counts</label><br>
+         <input type="radio" id="acts_of_service" name="love_lang" value="Acts of service">
+         <label for="acts_of_service">Acts of Service - ease my burden, please!</label><br>
+         <input type="radio" id="physcal_touch" name="love_lang" value="Physical touch">
+         <label for="physcal_touch">Physical touch - hugs, anyone??</label><br>
+         <input type="radio" id="words_of_affirmation" name="love_lang" value="Words of affirmation">
+         <label for="words_of_affirmation">Words of affirmation - I'm all ears.</label><br>
+         <input type="radio" id="quality_time" name="love_lang" value="Quality time">
+         <label for="quality_time">Quality time - stay with me?</label><br>
+ 
+         <a href='' onClick='nextPage("setup_complete", "your_love_lang"); return false;'>
+             <input type="submit" value="Submit">
+         </a>
+     </form>
+   </div>
+
+   <div id=level_of_service>
+      <h1>Level of Service</h1>
+  
+      <p>
+        Can you ever really have too much love?? Choose plan that fits you:
+      </p>
+
+      <form>
+          <input type="radio" id="gifts" name="service_level" value="Gifts">
+          <label for="gifts">Receiving gifts - it's the thoughfulness that counts</label><br>
+          <input type="radio" id="acts_of_service" name="service_level" value="Acts of service">
+          <label for="acts_of_service">Acts of Service - ease my burden, please!</label><br>
+  
+          <a href='' onClick='nextPage("setup_complete", "your_love_lang"); return false;'>
+              <input type="submit" value="Submit">
+          </a>
+      </form>
+    </div>
+
+   <div id=setup_complete>
+        <h1>Setup Complete</h1>
+
+        <p>
+            Congratulations! We have everything we need to give you the TLC you deserve.
+        </p>
+        <p>
+            Get ready to get Triggrd Happy!!
+        </p>
+
+        <a href='' onClick='nextPage("setup_complete", "notification_page"); return false;'>Done</a>
+   </div>
+
+   <div id=peace_page>
+       <!-- Return to this page between notifications-->
+        <p>
+            Enjoy the Zen ...
+        </p>
+   </div>
 
 </body>
 </html>
