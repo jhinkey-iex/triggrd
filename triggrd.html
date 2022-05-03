@@ -2,23 +2,24 @@
     <head>
         <title>Triggrd</title>
 <script>
-function foo() {
-    const obj = document.getElementById('first');
-    obj.style.visibility = 'visible';
-}
 function nextPage(current, next) {
     document.getElementById(current).style.visibility = 'hidden';
     document.getElementById(next).style.visibility = 'visible';
 }
 </script>
+<style>
+div {
+	visibility: hidden;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+</style>
     </head>
 
 <body>
-<h1>This is a test</h1>
-        
-<a onClick='foo()'>click me</a>
 
-<div id=first style='visibility: hidden'>
+<div id=first style='visibility: visible'>
 <!-- This is the first page users see when they open the app -->
 <h1>First page</h1>
 
@@ -26,9 +27,10 @@ function nextPage(current, next) {
 <a href='' onClick='nextPage("first", "second"); return false;'>Go to second page</a>
 </div>
 
-<div id=second style='visibility: hidden'>
+<div id=second>
 <!-- This is the second page -->
 <h1>Second page</h1>
+<a href='' onClick='nextPage("second", "third"); return false;'>Go to second page</a>
 </div>
 
 </body>
