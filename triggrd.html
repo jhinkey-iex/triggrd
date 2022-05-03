@@ -4,7 +4,11 @@
 <script>
 const token='pk_ee6a174ecb4e4aaf99ea0da688a9b367';
 const log = console;
+let fname;
+let love_lang;
 let party;
+let plan;
+let triggerArray = [];
 
 const triggerInfo = {
     ballot: {
@@ -71,11 +75,79 @@ function startPollingTrigger(triggerName) {
 
 function actOnTriggers() {
     party = document.forms[0].party.value;
+    console.log("party: ", party);
     const triggers = document.forms[0];
     for (const tr of triggers)
         if (tr.checked)
             startPollingTrigger(tr.value);
-    nextPage("second", "third");
+    nextPage("triggers", "your_love_lang");
+}
+
+function actOnTriggers2() {
+    for (const tr of triggerArray) {
+        console.log("tr: ", tr);
+        startPollingTrigger(tr);
+    }
+    nextPage("zen_page", "notifications_page");
+}
+
+function registerTriggers() {
+    
+    triggers_form_elem = document.getElementById("triggers_form");
+    recession = triggers_form_elem.recession.checked;
+    jet_fuel = triggers_form_elem.jet_fuel.checked;
+    crypto = triggers_form_elem.crypto.checked;
+    politics = triggers_form_elem.politics.checked;
+
+    console.log("recession: ", recession);
+    console.log("jet_fuel: ", jet_fuel);
+    console.log("crypto: ", crypto);
+    console.log("politics: ", politics);
+
+    if(recession) {
+        triggerArray.push("recession");
+    }
+
+    if(jet_fuel) {
+        triggerArray.push("jet_fuel");
+    }
+
+    if(crypto) {
+        triggerArray.push("crypto");
+    }
+
+    if(politics) {
+        triggerArray.push("politics");
+    }
+
+    nextPage("triggers", "your_love_lang");
+}
+
+function actOnAboutYourself() {
+    form=document.getElementById("about_yourself_form");
+    fname = form.fname.value;
+    party = form.party.value;
+
+    console.log("fname: ", fname);
+    console.log("party: ", party);
+
+    nextPage("basic_personal_info", "triggers");
+}
+
+function actOnLoveLang() {
+    love_lang = document.getElementById("love_lang_form").love_lang.value;
+
+    console.log("love_lang: ", love_lang);
+
+    nextPage("your_love_lang", "level_of_service");
+}
+
+function actOnLevelOfService() {
+    plan = document.getElementById("level_of_service_form").plan.value;
+
+    console.log("plan: ", plan);
+
+    nextPage("level_of_service", "setup_complete");
 }
 </script>
 <style>
@@ -91,38 +163,123 @@ div {
 <body>
 
 <div id=first style='visibility: visible'>
-<!-- This is the first page users see when they open the app -->
-<h1>First page</h1>
+    <!-- This is the first page users see when they open the app -->
+    <h1>Welcome to Triggrd!</h1>
 
-<p>
-<a href='' onClick='nextPage("first", "second"); return false;'>Go to second page</a>
-</div>
-
-<div id=second>
-<!-- This is the second page -->
-<h1>Second page</h1>
-
-<h2>Select your triggers:</h2>
-<form onSubmit='actOnTriggers(); return false;'>
-    <input type=checkbox name=triggers value=ballot>Generic Ballot
-        <select name=party>
-            <option value=Democrats>Democrat
-            <option value=Republicans>Republican
-        </select><br>
-    <input type=checkbox name=triggers value=recession>Probability of a Recession<br>
     <p>
-    <input type=submit value='Register My Triggers'>
-</form>
+        We're here to calm your nerves and make you feel good in the midst of life's storms and hiccups.
+    </p>
+
+    <a href='' onClick='nextPage("first", "basic_personal_info"); return false;'>Get Started</a>
 </div>
 
-<div id=third>
-<!-- This is where notifications happen (at this point, we are already
-     polling. -->
-<h1>Notifications</h1>
+<div id=basic_personal_info>
+    <h1>Tell us about yourself</h1>
 
-TODO
-</div>
+    <form id=about_yourself_form onSubmit='actOnAboutYourself(); return false;'>
+        <label for="fname">First name:</label>
+        <input type="text" name="fname"><br><br>
 
+        <label for="party">Political party affiliation (if politics gets you fired up):</label><br>
+        <input type="radio" name="party" value="Democrats">
+        <label for="Democrats">Democrat</label><br>
+        <input type="radio" name="party" value="Republicans">
+        <label for="Republicans">Republican</label><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+ </div>
+
+ <div id=triggers>
+    <h1>Triggers?</h1>
+
+    <p>Which events make you anxious?</p>
+    
+    <form id=triggers_form onSubmit='registerTriggers(); return false;'>
+        
+        <input type="checkbox" name="recession" value="recession">
+        <label for="recession">Recession probability increases</label><br>
+        
+        <input type="checkbox" name="jet_fuel" value="jet_fuel">
+        <label for="jet_fuel">Jet fuel price hikes</label><br>
+        
+        <input type="checkbox" name="crypto" value="crypto">
+        <label for="crypto">Crypto crashes</label><br>
+        
+        <input type="checkbox" name="politics" value="politics">
+        <label for="politics">Political party affiliation drops</label><br><br>
+
+        <input type="submit" value="Register My Triggers">
+    </form>
+  </div>
+
+  <div id=your_love_lang>
+     <h1>Your love language?</h1>
+
+     <p>
+        What fills your "love tank"?
+     </p>
+ 
+     <form id=love_lang_form onSubmit='actOnLoveLang(); return false;'>
+        <input type="radio" name="love_lang" value="receiving_gifts">
+        <label for="receiving_gifts">Receiving gifts - it's the thoughfulness that counts</label><br>
+        <input type="radio" name="love_lang" value="acts_of_service">
+        <label for="acts_of_service">Acts of Service - ease my burden, please!</label><br>
+        <input type="radio" name="love_lang" value="physical_touch">
+        <label for="physical_touch">Physical touch - hugs, anyone??</label><br>
+        <input type="radio" name="love_lang" value="words_of_affirmation">
+        <label for="words_of_affirmation">Words of affirmation - I'm all ears.</label><br>
+        <input type="radio" name="love_lang" value="quality_time">
+        <label for="quality_time">Quality time - stay with me?</label><br><br>
+ 
+        <input type="submit" value="Register My Love Language">
+     </form>
+   </div>
+
+    <div id=level_of_service>
+      <h1>Level of Service</h1>
+  
+      <p>
+        Can you ever really have too much love?? Choose plan that fits you:
+      </p>
+
+      <form id=level_of_service_form onSubmit='actOnLevelOfService(); return false;'>
+          <input type="radio" name="plan" value="standard">
+          <label for="standard">Standard Plan - I'm pretty tough, but a little encouragement never hurt.</label><br>
+          <input type="radio" name="plan" value="premium">
+          <label for="premium">Premium Plan - I'll take all the good vibes you can give me!</label><br><br>
+  
+          <input type="submit" value="Register My Level of Service">
+      </form>
+    </div>
+
+   <div id=setup_complete>
+        <h1>Setup Complete</h1>
+
+        <p>
+            Congratulations! We have everything we need to give you the TLC you deserve.
+        </p>
+        <p>
+            Get ready to get Triggrd Happy!!
+        </p>
+
+        <a href='' onClick='nextPage("setup_complete", "zen_page"); actOnTriggers2(); return false;'>Done</a>
+   </div>
+
+   <div id=zen_page>
+       <h1>Enjoy Triggrd</h1>
+        <p>
+            Enjoy the Zen ...
+        </p>
+   </div>
+
+   <div id=notifications_page>
+    <!-- This is where notifications happen (at this point, we are already
+         polling. -->
+    <h1>Notifications</h1>
+    
+    TODO
+    </div>
 </body>
 </html>
 <!-- vim:sts=4:et:sw=4: -->
