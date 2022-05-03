@@ -2,20 +2,35 @@
     <head>
         <title>Triggrd</title>
 <script>
+const token='pk_ee6a174ecb4e4aaf99ea0da688a9b367';
+
 function nextPage(current, next) {
     document.getElementById(current).style.visibility = 'hidden';
     document.getElementById(next).style.visibility = 'visible';
 }
+
+function startPollingTrigger(triggerName) {
+    // TODO
+    console.warn("startPollingTrigger: %s -- TODO", triggerName);
+}
+
+function actOnTriggers() {
+    const triggers = document.forms[0];
+    for (const tr of triggers)
+        if (tr.checked)
+            startPollingTrigger(tr.value);
+    nextPage("second", "third");
+}
 </script>
 <style>
 div {
-	visibility: hidden;
-	position: absolute;
-	top: 0px;
-	left: 0px;
+    visibility: hidden;
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }
 </style>
-    </head>
+</head>
 
 <body>
 
@@ -30,8 +45,24 @@ div {
 <div id=second>
 <!-- This is the second page -->
 <h1>Second page</h1>
-<a href='' onClick='nextPage("second", "third"); return false;'>Go to second page</a>
+
+<h2>Select your triggers:</h2>
+<form onSubmit='actOnTriggers(); return false;'>
+    <input type=checkbox name=triggers value=ballot>Generic Ballot<br>
+    <input type=checkbox name=triggers value=recession>Probability of a Recession<br>
+    <p>
+    <input type=submit value='Register My Triggers'>
+</form>
+</div>
+
+<div id=third>
+<!-- This is where notifications happen (at this point, we are already
+     polling. -->
+<h1>Notifications</h1>
+
+TODO
 </div>
 
 </body>
 </html>
+<!-- vim:sts=4:et:sw=4: -->
