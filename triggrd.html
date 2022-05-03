@@ -3,6 +3,59 @@
         <title>Triggrd</title>
 <script>
 const token='pk_ee6a174ecb4e4aaf99ea0da688a9b367';
+const log = console;
+let party;
+
+const triggerInfo = {
+    ballot: {
+        /* url can be function or string */
+        url() {
+            return 'https://cloud.iexapis.com/v1/query/DEV/' +
+                   'GENERIC_BALLOT_AVERAGES/2022/' + party + '?last=1';
+        },
+        period: 10 * 1000,
+        /* The state is kept along with the trigger definitions for convenience. */
+        state: {
+        },
+        handleUpdate(ti, data) {
+            if (data.length && ti.state.el) {
+                const el = data[0];
+                const oldDiff = ti.state.el.hi - ti.state.el.lo;
+                const newDiff = el.hi - el.lo;
+                log.debug('oldDiff: %d, newDiff: %d', oldDiff, newDiff);
+                if (newDiff < oldDiff)
+                    log.info("kitten me");
+                else
+                    log.info("don't kitten me");
+            }
+            if (data.length) {
+                log.debug('save data: %s', JSON.stringify(data[0]));
+                ti.state.el = data[0];
+            }
+        }
+    },
+    recession: {
+        url: '', // TODO
+        period: 10000,
+    },
+};
+
+function pollTrigger(ti) {
+    log.debug("pollTrigger: %s", ti.url);
+    const urlSansToken = 'function' === typeof(ti.url) ? ti.url() : ti.url;
+    const sep = urlSansToken.includes('?') ? '&' : '?';
+    const url = urlSansToken + sep + 'token=' + token;
+    log.debug("URL: %s", url);
+    fetch(url)
+        .then(response => {
+            if (response.status === 200)
+                return response.json();
+            else
+                return Promise.reject(`status of ${url} is ${response.status}`);
+        })
+        .then(ti.handleUpdate.bind(null, ti))
+        .catch(e => log.error("polling %s error: %o", url, e));
+}
 
 function nextPage(current, next) {
     document.getElementById(current).style.visibility = 'hidden';
@@ -10,11 +63,14 @@ function nextPage(current, next) {
 }
 
 function startPollingTrigger(triggerName) {
-    // TODO
-    console.warn("startPollingTrigger: %s -- TODO", triggerName);
+    log.debug("start polling trigger %s", triggerName);
+    const ti = triggerInfo[triggerName];
+    pollTrigger(ti);
+    setInterval(pollTrigger, ti.period, ti);
 }
 
 function actOnTriggers() {
+    party = document.forms[0].party.value;
     const triggers = document.forms[0];
     for (const tr of triggers)
         if (tr.checked)
@@ -48,7 +104,11 @@ div {
 
 <h2>Select your triggers:</h2>
 <form onSubmit='actOnTriggers(); return false;'>
-    <input type=checkbox name=triggers value=ballot>Generic Ballot<br>
+    <input type=checkbox name=triggers value=ballot>Generic Ballot
+        <select name=party>
+            <option value=Democrats>Democrat
+            <option value=Republicans>Republican
+        </select><br>
     <input type=checkbox name=triggers value=recession>Probability of a Recession<br>
     <p>
     <input type=submit value='Register My Triggers'>
