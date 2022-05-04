@@ -25,10 +25,11 @@ const triggerInfo = {
                 const newDiff = diff(data);
                 const oldDiff = diff(ti.state.el);
                 log.debug('oldDiff: %d, newDiff: %d', oldDiff, newDiff);
-                if (newDiff < oldDiff)
-                    log.info("kitten me");
-                else
-                    log.info("don't kitten me");
+                if (newDiff < oldDiff) {
+                    log.debug("kitten me");
+                    kittenMe();
+                } else
+                    log.debug("don't kitten me");
             }
             if (data.length) {
                 log.debug('save data: %s', JSON.stringify(data));
@@ -43,7 +44,7 @@ const triggerInfo = {
     },
 };
 
-function kittenMe(msg) {
+function kittenMe() {
     function getRandomInt(min, max) { // Copied from MDN
       min = Math.ceil(min);
       max = Math.floor(max);
@@ -55,12 +56,12 @@ function kittenMe(msg) {
         .then(response => response.json())
         .then(data => {
             const el = data[0];
-            fillInKitten(msg, el.mimeType, el.image);
+            fillInKitten(el.mimeType, el.image);
         })
         .catch(e => log.error('error kittenizing: %o', e));
 }
 
-function fillInKitten(msg, mimeType, data) {
+function fillInKitten(mimeType, data) {
     document.getElementById('kittenImage').src =
         'data:' + mimeType + ';base64,' + data;
 }
