@@ -6,6 +6,16 @@ const token='pk_ee6a174ecb4e4aaf99ea0da688a9b367';
 const log = console;
 let party;
 
+let loveLanguage = 'kittens'; // Other valid values: stoics
+
+// Feel free to add more, there are many more gems here:
+//      https://en.wikiquote.org/wiki/Marcus_Aurelius
+const stoicQuotesDb = [
+    `When you wake up in the morning, tell yourself: The people I deal with today will be meddling, ungrateful, arrogant, dishonest, jealous, and surly. They are like this because they can't tell good from evil.`,
+    `Whatever this is that I am, it is flesh and a little spirit and an intelligence.`,
+    `You could leave life right now. Let that determine what you do and say and think.`,
+];
+
 const triggerInfo = {
     ballot: {
         /* url can be function or string */
@@ -14,6 +24,7 @@ const triggerInfo = {
         /* The state is kept along with the trigger definitions for convenience. */
         state: {
         },
+        /* This function should return true if triggered */
         handleUpdate(ti, data) {
             function diff(data) {
                 const mine = +(data[1].candidate === party);
@@ -21,21 +32,20 @@ const triggerInfo = {
                 log.debug("mine: %d; other: %d", mine, other);
                 return data[mine].pct_estimate - data[other].pct_estimate;
             }
+            let retval;
             if (data.length > 1 && ti.state.el) {
                 const newDiff = diff(data);
                 const oldDiff = diff(ti.state.el);
                 log.debug('oldDiff: %d, newDiff: %d', oldDiff, newDiff);
-                if (newDiff < oldDiff) {
-                    log.debug("kitten me");
-                    kittenMe();
-                } else
-                    log.debug("don't kitten me");
-            }
+                retval = newDiff < oldDiff
+            } else
+                retval = false;
             if (data.length) {
                 log.debug('save data: %s', JSON.stringify(data));
                 log.debug('diff would be %f', diff(data));
                 ti.state.el = data;
             }
+            return retval;
         }
     },
     recession: {
@@ -44,12 +54,19 @@ const triggerInfo = {
     },
 };
 
+function getRandomInt(min, max) { // Copied from MDN
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+function displayStoicQuote() {
+    const idx = getRandomInt(0, stoicQuotesDb.length - 1);
+    const text = stoicQuotesDb[idx];
+    document.getElementById('insertStoicQuoteHere').innerHTML = text;
+}
+
 function kittenMe() {
-    function getRandomInt(min, max) { // Copied from MDN
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min) + min);
-    }
     const id = getRandomInt(1, 74);
     fetch('https://cloud.iexapis.com/v1/query/DEV/TRIGGRD-CATS/' + id +
                                                     '?token=' + token)
@@ -80,7 +97,18 @@ function pollTrigger(ti) {
             else
                 return Promise.reject(`status of ${url} is ${response.status}`);
         })
-        .then(ti.handleUpdate.bind(null, ti))
+        .then(data => {
+            if (ti.handleUpdate(ti, data))
+                switch (loveLanguage) {
+                default:
+                case 'kittens':
+                    kittenMe();
+                    break;
+                case 'stoics':
+                    displayStoicQuote();
+                    break;
+                }
+        })
         .catch(e => log.error("polling %s error: %o", url, e));
 }
 
@@ -97,6 +125,7 @@ function startPollingTrigger(triggerName) {
 }
 
 function actOnTriggers() {
+    loveLanguage = document.forms[0].loveLanguage.value;
     party = document.forms[0].party.value;
     const triggers = document.forms[0];
     for (const tr of triggers)
@@ -129,8 +158,13 @@ div {
 <!-- This is the second page -->
 <h1>Second page</h1>
 
-<h2>Select your triggers:</h2>
 <form onSubmit='actOnTriggers(); return false;'>
+<h2>Select your triggers:</h2>
+    Love language: <select name=loveLanguage>
+        <option value=kittens>Show me kittens
+        <option value=stoics>Quote me stoic philosophers
+    </select>
+    <p>
     <input type=checkbox name=triggers value=ballot>Generic Ballot
         <select name=party>
             <option value=Democrats>Democrat
@@ -149,7 +183,10 @@ div {
 
 </div>
 
+<!-- TODO: put this into a div somewhere -->
 <img src='' id=kittenImage>
+<p id=insertStoicQuoteHere>
+
 
 </body>
 </html>
