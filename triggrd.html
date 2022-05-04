@@ -43,6 +43,29 @@ const triggerInfo = {
     },
 };
 
+function kittenMe(msg) {
+    function getRandomInt(min, max) { // Copied from MDN
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+    const id = getRandomInt(1, 74);
+    fetch('https://cloud.iexapis.com/v1/query/DEV/TRIGGRD-CATS/' + id +
+                                                    '?token=' + token)
+        .then(response => response.json())
+        .then(data => {
+            const el = data[0];
+            fillInKitten(msg, el.mimeType, el.image);
+        })
+        .catch(e => log.error('error kittenizing: %o', e));
+}
+
+function fillInKitten(msg, mimeType, data) {
+    document.getElementById('kittenImage').src =
+        'data:' + mimeType + ';base64,' + data;
+}
+
+
 function pollTrigger(ti) {
     log.debug("pollTrigger: %s", ti.url);
     const urlSansToken = 'function' === typeof(ti.url) ? ti.url() : ti.url;
@@ -123,8 +146,9 @@ div {
      polling. -->
 <h1>Notifications</h1>
 
-TODO
 </div>
+
+<img src='' id=kittenImage>
 
 </body>
 </html>
